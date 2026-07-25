@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班級記帳簿・同學版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F1F3ED; --paper: #FFFFFF; --ink: #2A2B22; --ink-light: #6B6D5E;
+    --red: #A8452E; --teal: #1F6F6B; --line: #DCDFD3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg); color: var(--ink); min-height: 100vh;
+  }
+  .clv-shell { max-width: 720px; margin: 0 auto; padding: 28px 20px 60px; }
+  .clv-header { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 24px 28px; position: relative; }
+  .clv-badge { position: absolute; top: -1px; right: 28px; font-size: 11px; letter-spacing: 1px; background: var(--teal); color: #fff; padding: 4px 10px; border-radius: 0 0 4px 4px; }
+  .clv-title { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 24px; margin: 0; }
+  .clv-subtitle { font-size: 12px; color: var(--ink-light); letter-spacing: 2px; margin-top: 2px; }
+  .clv-hero-label { font-size: 13px; color: var(--ink-light); margin-top: 18px; }
+  .clv-hero-amount { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 40px; }
+  .clv-hero-amount.neg { color: var(--red); }
+  .clv-stats-row { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+  .clv-stat { flex: 1; min-width: 140px; border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+  .clv-stat .val { font-weight: 700; font-size: 16px; }
+  .clv-stat.income .val { color: var(--teal); }
+  .clv-stat.expense .val { color: var(--red); }
+  .clv-stat .lab { font-size: 12px; color: var(--ink-light); }
+  .clv-updated-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px; }
+  .clv-updated { font-size: 12px; color: var(--ink-light); }
+  .clv-refresh-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; font-size: 12px; color: var(--ink-light); cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+  .clv-refresh-btn:hover { color: var(--ink); }
+  .clv-refresh-btn svg.spin { animation: clv-spin 0.6s linear; }
+  @keyframes clv-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .clv-tx-list { margin-top: 22px; }
+  .clv-tx-row { display: flex; align-items: center; gap: 12px; padding: 12px 6px; border-bottom: 1px solid var(--line); }
+  .clv-tx-date { font-size: 12px; color: var(--ink-light); width: 90px; flex-shrink: 0; }
+  .clv-tx-main { flex: 1; min-width: 0; }
+  .clv-tx-item { font-weight: 500; font-size: 14px; }
+  .clv-tx-meta { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
+  .clv-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--bg); color: var(--ink-light); margin-right: 6px; }
+  .clv-tx-amount { font-weight: 700; font-size: 15px; width: 110px; text-align: right; flex-shrink: 0; }
+  .clv-tx-amount.income { color: var(--teal); }
+  .clv-tx-amount.expense { color: var(--red); }
+  .clv-empty { text-align: center; padding: 40px 10px; color: var(--ink-light); font-size: 14px; }
+  .clv-error { color: var(--red); font-size: 12px; margin-top: 10px; }
+
+  svg.icon { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="clv-shell">
+  <div class="clv-header">
+    <div class="clv-badge">班上同學版・唯讀</div>
+    <h1 class="clv-title" id="clvTitle">班級 記帳簿</h1>
+    <div class="clv-subtitle">CLASS TREASURY · READ ONLY</div>
+
+    <div id="clvErrorBox" class="clv-error" style="display:none; margin-top:16px;"></div>
+
+    <div id="clvHero" style="display:none;">
+      <div class="clv-hero-label">目前結餘</div>
+      <div class="clv-hero-amount" id="clvBalance">NT$ 0</div>
+      <div class="clv-stats-row">
+        <div class="clv-stat income">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <div><div class="lab">總收入</div><div class="val" id="clvIncome">NT$ 0</div></div>
+        </div>
+        <div class="clv-stat expense">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+          <div><div class="lab">總支出</div><div class="val" id="clvExpense">NT$ 0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clv-updated-row">
+      <div class="clv-updated" id="clvUpdated">尚未取得資料</div>
+      <button class="clv-refresh-btn" id="clvRefreshBtn">
+        <svg class="icon" id="clvRefreshIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/>
+        </svg>
+        立即檢查
+      </button>
+    </div>
+  </div>
+
+  <div id="clvTxList"></div>
+</div>
+
+<script>
+(function () {
+  // ---- 請在這裡填入總務後台設定的同一組資訊，同學版就不需要任何登入畫面 ----
+  const GH_OWNER = "PO-MEOW";
+  const GH_REPO = "General-Affairs";
+  const GH_PATH = "ledger-data.json";
+  const GH_BRANCH = "main";
+  const POLL_MS = 10000; // 每 10 秒向 GitHub 拉一次最新資料
+
+  let data = null;
+  let lastChecked = null;
+  let pollTimer = null;
+
+  function fmt(n) {
+    return "NT$ " + Math.round(n || 0).toLocaleString();
+  }
+
+  function rawUrl() {
+    return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_PATH}?t=${Date.now()}`;
+  }
+
+  function setRefreshSpinning(spinning) {
+    const icon = document.getElementById("clvRefreshIcon");
+    icon.classList.toggle("spin", !!spinning);
+  }
+
+  function render() {
+    const transactions = data && Array.isArray(data.transactions) ? data.transactions : [];
+    const totalIncome = transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount), 0);
+    const totalExpense = transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount), 0);
+    const balance = totalIncome - totalExpense;
+    const sortedTx = [...transactions].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+    document.getElementById("clvTitle").textContent = (data && data.className ? data.className : "班級") + " 記帳簿";
+
+    const balEl = document.getElementById("clvBalance");
+    balEl.textContent = fmt(balance);
+    balEl.classList.toggle("neg", balance < 0);
+    document.getElementById("clvIncome").textContent = fmt(totalIncome);
+    document.getElementById("clvExpense").textContent = fmt(totalExpense);
+
+    const updatedText =
+      (data && data.updatedAt
+        ? "資料更新時間：" + new Date(data.updatedAt).toLocaleString("zh-TW")
+        : "尚未取得資料") +
+      (lastChecked ? " ・上次檢查：" + lastChecked.toLocaleTimeString("zh-TW") : "");
+    document.getElementById("clvUpdated").textContent = updatedText;
+
+    const listEl = document.getElementById("clvTxList");
+    if (!data) {
+      listEl.innerHTML = "";
+    } else if (sortedTx.length === 0) {
+      listEl.innerHTML = '<div class="clv-empty">目前尚無收支紀錄。</div>';
+    } else {
+      listEl.innerHTML =
+        '<div class="clv-tx-list">' +
+        sortedTx.map(t => {
+          const amt = fmt(t.amount).toString().replace("NT$ ", "");
+          const sign = t.type === "income" ? "+" : "−";
+          return (
+            '<div class="clv-tx-row">' +
+              '<div class="clv-tx-date">' + escapeHtml(t.date) + '</div>' +
+              '<div class="clv-tx-main">' +
+                '<div class="clv-tx-item">' + escapeHtml(t.item) + '</div>' +
+                '<div class="clv-tx-meta">' +
+                  '<span class="clv-tag">' + escapeHtml(t.category) + '</span>' +
+                  (t.note ? '<span>' + escapeHtml(t.note) + '</span>' : '') +
+                '</div>' +
+              '</div>' +
+              '<div class="clv-tx-amount ' + t.type + '">' + sign + amt + '</div>' +
+            '</div>'
+          );
+        }).join("") +
+        '</div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  async function fetchData(showLoading) {
+    if (showLoading) setRefreshSpinning(true);
+    try {
+      const res = await fetch(rawUrl(), { cache: "no-store" });
+      if (!res.ok) {
+        throw new Error(
+          res.status === 404
+            ? "還找不到這個檔案，請確認總務已經存過一次資料。"
+            : `讀取失敗（HTTP ${res.status}）`
+        );
+      }
+      const json = await res.json();
+      data = json;
+      lastChecked = new Date();
+      document.getElementById("clvErrorBox").style.display = "none";
+      document.getElementById("clvHero").style.display = "";
+      render();
+    } catch (e) {
+      const box = document.getElementById("clvErrorBox");
+      box.textContent = e.message || "讀取失敗，請確認 GH_OWNER / GH_REPO / GH_PATH 是否填對。";
+      if (!data) {
+        box.style.display = "";
+        document.getElementById("clvHero").style.display = "none";
+      }
+      render();
+    } finally {
+      setRefreshSpinning(false);
+    }
+  }
+
+  document.getElementById("clvRefreshBtn").addEventListener("click", () => fetchData(true));
+
+  fetchData(true);
+  pollTimer = setInterval(() => fetchData(false), POLL_MS);
+})();
+</script>
+
+</body>
+</html>
