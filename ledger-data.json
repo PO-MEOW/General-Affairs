@@ -1,5 +1,5 @@
 {
-  "className": "我的班級",
+  "className": "211的",
   "dueAmount": 100,
   "classSize": 38,
   "transactions": [
@@ -15,5 +15,5 @@
   ],
   "members": [],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-07-27T01:56:34.407Z"
+  "updatedAt": "2026-07-27T01:56:49.485Z"
 }
