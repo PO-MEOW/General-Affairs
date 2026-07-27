@@ -13,7 +13,15 @@
       "note": ""
     }
   ],
-  "members": [],
+  "members": [
+    {
+      "id": "ms2ivnyv31ju0",
+      "name": "鄧宇博",
+      "paid": false,
+      "amount": 300,
+      "txId": null
+    }
+  ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-07-27T01:02:32.447Z"
+  "updatedAt": "2026-07-27T01:02:38.368Z"
 }
