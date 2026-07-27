@@ -11,17 +11,26 @@
       "type": "expense",
       "amount": 100,
       "note": ""
+    },
+    {
+      "id": "ms2ivq60w08rm",
+      "date": "2026-07-27",
+      "item": "鄧宇博 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 300,
+      "note": "班費收款"
     }
   ],
   "members": [
     {
       "id": "ms2ivnyv31ju0",
       "name": "鄧宇博",
-      "paid": false,
+      "paid": true,
       "amount": 300,
-      "txId": null
+      "txId": "ms2ivq60w08rm"
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-07-27T01:02:38.368Z"
+  "updatedAt": "2026-07-27T01:02:41.215Z"
 }
