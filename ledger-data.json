@@ -2,8 +2,18 @@
   "className": "我的班級",
   "dueAmount": 300,
   "classSize": 38,
-  "transactions": [],
+  "transactions": [
+    {
+      "id": "ms2ivjeggb121",
+      "date": "2026-07-27",
+      "item": "雜誌",
+      "category": "雜項支出",
+      "type": "expense",
+      "amount": 100,
+      "note": ""
+    }
+  ],
   "members": [],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-07-27T01:02:17.253Z"
+  "updatedAt": "2026-07-27T01:02:32.447Z"
 }
