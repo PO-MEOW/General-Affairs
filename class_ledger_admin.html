@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班級記帳簿・總務後台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #F1F3ED; --paper: #FFFFFF; --ink: #2A2B22; --ink-light: #6B6D5E;
+    --red: #A8452E; --teal: #1F6F6B; --amber: #C98A2E; --line: #DCDFD3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--ink);
+    min-height: 100vh;
+  }
+  .cl-shell { max-width: 880px; margin: 0 auto; padding: 28px 20px 60px; position: relative; }
+  .cl-shell::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 14px; width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--red) 0 6px, transparent 6px 12px);
+    opacity: 0.35; pointer-events: none;
+  }
+  .cl-header { background: var(--paper); border-radius: 4px; border: 1px solid var(--line); padding: 24px 28px; position: relative; box-shadow: 0 1px 0 var(--line); }
+  .cl-ribbon { position: absolute; top: -2px; right: 28px; width: 26px; height: 46px; background: var(--red); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+  .cl-title-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .cl-title { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 26px; margin: 0; cursor: text; border-bottom: 1px dashed transparent; }
+  .cl-title:hover { border-bottom: 1px dashed var(--line); }
+  .cl-subtitle { font-size: 12px; color: var(--ink-light); letter-spacing: 2px; }
+  .cl-note { font-size: 12px; color: var(--ink-light); margin-top: 4px; }
+  .cl-hero { margin-top: 18px; }
+  .cl-hero-label { font-size: 13px; color: var(--ink-light); }
+  .cl-hero-amount { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 42px; line-height: 1.15; }
+  .cl-hero-amount.neg { color: var(--red); }
+  .cl-stats-row { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+  .cl-stat { flex: 1; min-width: 140px; border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+  .cl-stat .val { font-weight: 700; font-size: 16px; }
+  .cl-stat.income .val { color: var(--teal); }
+  .cl-stat.expense .val { color: var(--red); }
+  .cl-stat .lab { font-size: 12px; color: var(--ink-light); }
+
+  .cl-gh-box { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; margin-bottom: 18px; }
+  .cl-gh-title { display: flex; align-items: center; gap: 8px; font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .cl-gh-desc { font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 14px; }
+  .cl-gh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cl-gh-grid .full { grid-column: 1 / -1; }
+  .cl-gh-grid label { font-size: 12px; color: var(--ink-light); display: block; margin-bottom: 4px; }
+  .cl-gh-grid input { width: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 13px; font-family: monospace; }
+  .cl-gh-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px; }
+  .cl-gh-warning { display: flex; gap: 8px; align-items: flex-start; background: #FBF3EC; border: 1px solid #E9D4B8; border-radius: 4px; padding: 10px 12px; font-size: 12px; color: #7A5A2E; margin-top: 12px; line-height: 1.6; }
+  .cl-sync-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-top: 4px; }
+  .cl-sync-row.saved { color: var(--teal); }
+  .cl-sync-row.error { color: var(--red); }
+  .cl-sync-row.loading, .cl-sync-row.saving { color: var(--ink-light); }
+
+  .cl-pw-box { max-width: 380px; margin: 20px auto 0; text-align: center; }
+  .cl-pw-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--ink-light); }
+  .cl-pw-title { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+  .cl-pw-desc { font-size: 12px; color: var(--ink-light); margin-bottom: 16px; line-height: 1.6; }
+  .cl-pw-field { text-align: left; margin-bottom: 10px; }
+  .cl-pw-field label { display: block; font-size: 12px; color: var(--ink-light); margin-bottom: 4px; }
+  .cl-pw-field input { width: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 9px 12px; font-size: 14px; font-family: 'Noto Sans TC', sans-serif; }
+  .cl-pw-error { color: var(--red); font-size: 12px; margin: 6px 0 4px; text-align: left; }
+  .cl-pw-actions { margin-top: 12px; }
+  .cl-pw-actions .cl-btn { width: 100%; justify-content: center; }
+  .cl-header-actions { display: flex; gap: 8px; position: absolute; top: 22px; right: 60px; }
+  .cl-mini-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; font-size: 12px; color: var(--ink-light); cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+  .cl-mini-btn:hover { color: var(--ink); }
+  .cl-mini-btn svg.spin { animation: cl-spin 0.6s linear; }
+  @keyframes cl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .cl-pw-modal-backdrop { position: fixed; inset: 0; background: rgba(42,43,34,0.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+  .cl-pw-modal { background: var(--paper); border-radius: 6px; padding: 24px; width: 100%; max-width: 360px; }
+
+  .cl-tabs { display: flex; gap: 6px; margin-top: 22px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .cl-tab { padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--ink-light); border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Noto Sans TC', sans-serif; }
+  .cl-tab.active { color: var(--ink); border-bottom: 2px solid var(--red); font-weight: 700; }
+
+  .cl-panel { margin-top: 18px; }
+  .cl-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+  .cl-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--ink); color: #fff; border: none; padding: 9px 16px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+  .cl-btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .cl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .cl-btn:hover:not(:disabled) { opacity: 0.88; }
+
+  .cl-form { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px; margin-bottom: 16px; }
+  .cl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cl-field { display: flex; flex-direction: column; gap: 4px; }
+  .cl-field label { font-size: 12px; color: var(--ink-light); }
+  .cl-field input, .cl-field select { border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; font-size: 14px; font-family: 'Noto Sans TC', sans-serif; color: var(--ink); background: #fff; }
+  .cl-type-toggle { display: flex; gap: 8px; }
+  .cl-type-toggle button { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 13px; font-family: 'Noto Sans TC', sans-serif; }
+  .cl-type-toggle button.on-income { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .cl-type-toggle button.on-expense { background: var(--red); color: #fff; border-color: var(--red); }
+  .cl-form-actions { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
+
+  .cl-tx-list { display: flex; flex-direction: column; gap: 0; }
+  .cl-tx-row { display: flex; align-items: center; gap: 12px; padding: 12px 6px; border-bottom: 1px solid var(--line); }
+  .cl-tx-date { font-size: 12px; color: var(--ink-light); width: 78px; flex-shrink: 0; }
+  .cl-tx-main { flex: 1; min-width: 0; }
+  .cl-tx-item { font-weight: 500; font-size: 14px; }
+  .cl-tx-meta { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
+  .cl-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--bg); color: var(--ink-light); margin-right: 6px; }
+  .cl-tx-amount { font-weight: 700; font-size: 15px; width: 110px; text-align: right; flex-shrink: 0; }
+  .cl-tx-amount.income { color: var(--teal); }
+  .cl-tx-amount.expense { color: var(--red); }
+  .cl-tx-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .cl-icon-btn { background: none; border: none; cursor: pointer; padding: 6px; color: var(--ink-light); border-radius: 4px; }
+  .cl-icon-btn:hover { background: var(--bg); color: var(--ink); }
+  .cl-empty { text-align: center; padding: 40px 10px; color: var(--ink-light); font-size: 14px; }
+
+  .cl-member-settings { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 13px; color: var(--ink-light); flex-wrap: wrap; }
+  .cl-member-settings input { width: 90px; border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; font-size: 13px; }
+  .cl-member-summary { display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+  .cl-member-add { display: flex; gap: 8px; margin-bottom: 14px; }
+  .cl-member-add input { flex: 1; border: 1px solid var(--line); border-radius: 4px; padding: 9px 12px; font-size: 14px; }
+  .cl-member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .cl-member-card { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; background: var(--paper); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cl-member-card.paid { border-color: var(--teal); background: #F3F8F7; }
+  .cl-member-name { font-weight: 500; font-size: 14px; }
+  .cl-member-amt { font-size: 12px; color: var(--ink-light); }
+  .cl-member-btns { display: flex; align-items: center; gap: 4px; }
+  .cl-check { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fff; }
+  .cl-check.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+  .cl-chart-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
+  .cl-chart-card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px; }
+  .cl-chart-title { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+
+  @media (max-width: 560px) {
+    .cl-form-grid, .cl-gh-grid { grid-template-columns: 1fr; }
+    .cl-tx-date { width: 58px; }
+    .cl-tx-amount { width: 84px; }
+    .cl-header-actions { position: static; margin-top: 12px; flex-wrap: wrap; }
+    .cl-ribbon { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cl-shell">
+  <div id="app"></div>
+</div>
+
+<script>
+/* ============ 常數 / 工具函式 ============ */
+
+// ---- 請在這裡填入固定的 GitHub 倉庫資訊（跟 class_ledger_view.html 裡的設定要一致）----
+const GH_OWNER = "PO-MEOW";
+const GH_REPO = "General-Affairs";
+const GH_PATH = "ledger-data.json";
+const GH_BRANCH = "main";
+
+const CATEGORIES = ["班費", "活動經費", "文具用品", "雜項支出", "罰鍰"];
+const CHART_COLORS = ["#1F6F6B", "#C98A2E", "#A8452E", "#5C7A9E", "#8C7851", "#5C7A5C", "#9C6B8A"];
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+function fmt(n) {
+  return "NT$ " + Math.round(n || 0).toLocaleString();
+}
+function b64EncodeUtf8(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64DecodeUtf8(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\n/g, ""))));
+}
+async function hashPassword(pw) {
+  const enc = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* ============ 圖示（簡易線條 SVG） ============ */
+function icon(name, size, color) {
+  size = size || 16;
+  const c = color || "currentColor";
+  const paths = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',
+    wallet: '<path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/><path d="M16 12h5v4h-5a2 2 0 0 1 0-4z"/>',
+    users: '<path d="M16 20v-1.5a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4V20"/><circle cx="9" cy="8" r="3.5"/><path d="M21.5 20v-1.5a4 4 0 0 0-2.7-3.78"/><path d="M15 4.13a3.5 3.5 0 0 1 0 6.75"/>',
+    pie: '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+    check: '<polyline points="20 6 9 17 4 12"/>',
+    x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    pencil: '<path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+    listchecks: '<polyline points="2.5 6 4 7.5 7 4.5"/><line x1="11" y1="6" x2="21" y2="6"/><polyline points="2.5 12 4 13.5 7 10.5"/><line x1="11" y1="12" x2="21" y2="12"/><polyline points="2.5 18 4 19.5 7 16.5"/><line x1="11" y1="18" x2="21" y2="18"/>',
+    server: '<rect x="2" y="3" width="20" height="7" rx="1.5"/><rect x="2" y="14" width="20" height="7" rx="1.5"/><line x1="6" y1="6.5" x2="6.01" y2="6.5"/><line x1="6" y1="17.5" x2="6.01" y2="17.5"/>',
+    refresh: '<path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/>',
+    cloudup: '<path d="M16 16l-4-4-4 4"/><path d="M12 12v9"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
+    alert: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+    lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    key: '<path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5"/>',
+    trendup: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    trenddown: '<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>'
+  };
+  return '<svg class="icon" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' + c + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || '') + '</svg>';
+}
+
+/* ============ 狀態 ============ */
+function blankTx() {
+  return { id: null, date: todayStr(), item: "", category: CATEGORIES[0], type: "expense", amount: "", note: "" };
+}
+
+const S = {
+  ghToken: "", connected: false, sha: null, syncStatus: "idle", syncMessage: "",
+  tab: "ledger", transactions: [], members: [], className: "我的班級", dueAmount: 300, classSize: 38,
+  editingClassName: false,
+  adminPassword: "", pwUnlocked: false, pwInput: "", pwInput2: "", pwError: "", editingPassword: false,
+  showTxForm: false, editingTx: null, txDraft: blankTx(),
+  newMemberName: ""
+};
+
+let pieChart = null, barChart = null;
+
+/* ============ GitHub 存取 ============ */
+function ghUrl() {
+  return `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${encodeURIComponent(GH_PATH)}`;
+}
+function ghHeaders(extra) {
+  return Object.assign(
+    { Accept: "application/vnd.github+json" },
+    S.ghToken ? { Authorization: `token ${S.ghToken}` } : {},
+    extra || {}
+  );
+}
+
+async function handleConnect() {
+  S.syncStatus = "loading";
+  S.syncMessage = "";
+  S.pwError = "";
+  render();
+  try {
+    const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(GH_BRANCH)}`, { headers: ghHeaders() });
+
+    if (res.status === 404) {
+      if (S.pwInput.trim().length < 4) {
+        S.syncStatus = "idle";
+        S.pwError = "請輸入至少 4 個字元的密碼，第一次連線會用它建立管理密碼。";
+        render();
+        return;
+      }
+      const hash = await hashPassword(S.pwInput);
+      S.sha = null;
+      S.transactions = [];
+      S.members = [];
+      S.className = "我的班級";
+      S.dueAmount = 300;
+      S.classSize = 38;
+      S.adminPassword = hash;
+      S.pwUnlocked = true;
+      S.connected = true;
+      S.pwInput = "";
+      S.syncStatus = "idle";
+      S.syncMessage = "這個檔案還不存在，新增第一筆紀錄後會自動建立，並套用你剛設定的密碼。";
+      render();
+      return;
+    }
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message || `讀取失敗（HTTP ${res.status}）`);
+    }
+
+    const json = await res.json();
+    const decoded = JSON.parse(b64DecodeUtf8(json.content));
+    const storedHash = decoded.adminPassword || "";
+
+    let finalHash = storedHash;
+    if (storedHash) {
+      const hash = await hashPassword(S.pwInput);
+      if (hash !== storedHash) {
+        S.syncStatus = "idle";
+        S.pwError = "密碼不對，請再試一次。";
+        render();
+        return;
+      }
+    } else {
+      if (S.pwInput.trim().length < 4) {
+        S.syncStatus = "idle";
+        S.pwError = "這份資料還沒有設定密碼，請輸入至少 4 個字元的密碼再連接。";
+        render();
+        return;
+      }
+      finalHash = await hashPassword(S.pwInput);
+    }
+
+    S.sha = json.sha;
+    const nextTransactions = Array.isArray(decoded.transactions) ? decoded.transactions : [];
+    const nextMembers = Array.isArray(decoded.members) ? decoded.members : [];
+    const nextClassName = decoded.className || "我的班級";
+    const nextDueAmount = decoded.dueAmount || 300;
+    const nextClassSize = decoded.classSize || 38;
+
+    S.transactions = nextTransactions;
+    S.members = nextMembers;
+    S.className = nextClassName;
+    S.dueAmount = nextDueAmount;
+    S.classSize = nextClassSize;
+    S.adminPassword = finalHash;
+    S.pwUnlocked = true;
+    S.connected = true;
+    S.pwInput = "";
+    S.syncStatus = "saved";
+    S.syncMessage = "已連上 GitHub，密碼正確，資料是最新版本。";
+    render();
+
+    if (!storedHash) {
+      await saveToGithub({
+        className: nextClassName, dueAmount: nextDueAmount, classSize: nextClassSize,
+        transactions: nextTransactions, members: nextMembers, adminPassword: finalHash
+      });
+    }
+  } catch (e) {
+    S.syncStatus = "error";
+    S.syncMessage = e.message || "連線失敗，請確認 Token 是否正確。";
+    render();
+  }
+}
+
+async function reloadFromGithub() {
+  S.syncStatus = "loading";
+  S.syncMessage = "";
+  render();
+  try {
+    const res = await fetch(`${ghUrl()}?ref=${encodeURIComponent(GH_BRANCH)}`, { headers: ghHeaders() });
+    if (res.status === 404) {
+      S.syncStatus = "idle";
+      S.syncMessage = "GitHub 上確認還沒有這個檔案，代表之前的紀錄都還沒有真的存進去。畫面已重設為空白，請重新新增紀錄（並確認 Token 有寫入權限）。";
+      S.sha = null;
+      S.transactions = [];
+      S.members = [];
+      render();
+      return;
+    }
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message || `讀取失敗（HTTP ${res.status}）`);
+    }
+    const json = await res.json();
+    S.sha = json.sha;
+    const decoded = JSON.parse(b64DecodeUtf8(json.content));
+    S.transactions = Array.isArray(decoded.transactions) ? decoded.transactions : [];
+    S.members = Array.isArray(decoded.members) ? decoded.members : [];
+    S.className = decoded.className || "我的班級";
+    S.dueAmount = decoded.dueAmount || 300;
+    S.classSize = decoded.classSize || 38;
+    if (decoded.adminPassword) S.adminPassword = decoded.adminPassword;
+    S.syncStatus = "saved";
+    S.syncMessage = "已重新載入，資料是最新版本。";
+  } catch (e) {
+    S.syncStatus = "error";
+    S.syncMessage = e.message || "重新載入失敗，請確認 Token 是否正確。";
+  }
+  render();
+}
+
+async function saveToGithub(next) {
+  S.syncStatus = "saving";
+  render();
+  try {
+    const payload = {
+      className: next.className,
+      dueAmount: next.dueAmount,
+      classSize: next.classSize,
+      transactions: next.transactions,
+      members: next.members,
+      adminPassword: next.adminPassword !== undefined ? next.adminPassword : S.adminPassword,
+      updatedAt: new Date().toISOString()
+    };
+    const body = Object.assign(
+      {
+        message: `更新班費紀錄 ${new Date().toLocaleString("zh-TW")}`,
+        content: b64EncodeUtf8(JSON.stringify(payload, null, 2)),
+        branch: GH_BRANCH
+      },
+      S.sha ? { sha: S.sha } : {}
+    );
+    const res = await fetch(ghUrl(), {
+      method: "PUT",
+      headers: ghHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      if (res.status === 409 || /sha/i.test(errBody.message || "")) {
+        throw new Error("資料已被其他裝置更新過，請先按「重新載入」再修改一次。");
+      }
+      throw new Error(errBody.message || `儲存失敗（HTTP ${res.status}）`);
+    }
+    const data = await res.json();
+    S.sha = data.content.sha;
+    S.syncStatus = "saved";
+    S.syncMessage = "已儲存到 GitHub，同學畫面稍後會自動看到更新。";
+  } catch (e) {
+    S.syncStatus = "error";
+    S.syncMessage = e.message || "儲存失敗，請檢查 Token 權限。";
+  }
+  render();
+}
+
+function currentSettings(overrides) {
+  return Object.assign({ className: S.className, dueAmount: S.dueAmount, classSize: S.classSize, adminPassword: S.adminPassword }, overrides || {});
+}
+
+async function persistTransactions(list) {
+  S.transactions = list;
+  await saveToGithub(Object.assign(currentSettings(), { transactions: list, members: S.members }));
+}
+async function persistMembers(list) {
+  S.members = list;
+  await saveToGithub(Object.assign(currentSettings(), { transactions: S.transactions, members: list }));
+}
+async function persistSettings(next) {
+  S.className = next.className;
+  S.dueAmount = next.dueAmount;
+  S.classSize = next.classSize;
+  await saveToGithub(Object.assign({}, next, { transactions: S.transactions, members: S.members }));
+}
+
+/* ============ 衍生資料 ============ */
+function computeDerived() {
+  const totalIncome = S.transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount), 0);
+  const totalExpense = S.transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount), 0);
+  const balance = totalIncome - totalExpense;
+
+  const catMap = {};
+  S.transactions.filter(t => t.type === "expense").forEach(t => {
+    catMap[t.category] = (catMap[t.category] || 0) + Number(t.amount);
+  });
+  const expenseByCategory = Object.entries(catMap).map(([name, value]) => ({ name, value }));
+
+  const paidCount = S.members.filter(m => m.paid).length;
+  const collectedTotal = S.members.filter(m => m.paid).reduce((s, m) => s + Number(m.amount), 0);
+  const outstandingTotal = S.members.filter(m => !m.paid).reduce((s, m) => s + Number(m.amount), 0);
+
+  const sortedTx = [...S.transactions].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+  return { totalIncome, totalExpense, balance, expenseByCategory, paidCount, collectedTotal, outstandingTotal, sortedTx };
+}
+
+/* ============ 交易 handlers ============ */
+function openAddTx() {
+  S.editingTx = null;
+  S.txDraft = blankTx();
+  S.showTxForm = true;
+  render();
+}
+function openEditTx(id) {
+  const tx = S.transactions.find(t => t.id === id);
+  if (!tx) return;
+  S.editingTx = id;
+  S.txDraft = Object.assign({}, tx, { amount: String(tx.amount) });
+  S.showTxForm = true;
+  render();
+}
+function cancelTxForm() {
+  S.showTxForm = false;
+  render();
+}
+function setTxType(type) {
+  S.txDraft.type = type;
+  render();
+}
+function saveTx() {
+  if (!S.txDraft.item.trim() || !S.txDraft.amount || Number(S.txDraft.amount) <= 0) return;
+  const clean = Object.assign({}, S.txDraft, { amount: Number(S.txDraft.amount) });
+  if (S.editingTx) {
+    persistTransactions(S.transactions.map(t => (t.id === S.editingTx ? clean : t)));
+  } else {
+    clean.id = uid();
+    persistTransactions([...S.transactions, clean]);
+  }
+  S.showTxForm = false;
+  S.editingTx = null;
+}
+function deleteTx(id) {
+  persistTransactions(S.transactions.filter(t => t.id !== id));
+}
+
+/* ============ 班費成員 handlers ============ */
+function addMember() {
+  const name = S.newMemberName.trim();
+  if (!name) return;
+  S.newMemberName = "";
+  persistMembers([...S.members, { id: uid(), name, paid: false, amount: S.dueAmount, txId: null }]);
+}
+function removeMember(id) {
+  const m = S.members.find(x => x.id === id);
+  if (!m) return;
+  const nextTx = m.txId ? S.transactions.filter(t => t.id !== m.txId) : S.transactions;
+  const nextMembers = S.members.filter(x => x.id !== m.id);
+  S.transactions = nextTx;
+  S.members = nextMembers;
+  saveToGithub(Object.assign(currentSettings(), { transactions: nextTx, members: nextMembers }));
+}
+function togglePaid(id) {
+  const m = S.members.find(x => x.id === id);
+  if (!m) return;
+  if (!m.paid) {
+    const tx = {
+      id: uid(), date: todayStr(), item: `${m.name} 繳交班費`,
+      category: "班費", type: "income", amount: Number(m.amount), note: "班費收款"
+    };
+    const nextTx = [...S.transactions, tx];
+    const nextMembers = S.members.map(x => (x.id === m.id ? Object.assign({}, x, { paid: true, txId: tx.id }) : x));
+    S.transactions = nextTx;
+    S.members = nextMembers;
+    saveToGithub(Object.assign(currentSettings(), { transactions: nextTx, members: nextMembers }));
+  } else {
+    const nextTx = m.txId ? S.transactions.filter(t => t.id !== m.txId) : S.transactions;
+    const nextMembers = S.members.map(x => (x.id === m.id ? Object.assign({}, x, { paid: false, txId: null }) : x));
+    S.transactions = nextTx;
+    S.members = nextMembers;
+    saveToGithub(Object.assign(currentSettings(), { transactions: nextTx, members: nextMembers }));
+  }
+}
+
+function exportCSV() {
+  const { sortedTx } = computeDerived();
+  const header = "日期,項目,分類,類型,金額,備註\n";
+  const rows = sortedTx.map(t =>
+    [t.date, t.item, t.category, t.type === "income" ? "收入" : "支出", t.amount, t.note || ""]
+      .map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")
+  ).join("\n");
+  const blob = new Blob(["\uFEFF" + header + rows], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${S.className}_記帳明細_${todayStr()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ============ 管理密碼 handlers ============ */
+async function handleUnlock() {
+  S.pwError = "";
+  const hash = await hashPassword(S.pwInput);
+  if (hash === S.adminPassword) {
+    S.pwUnlocked = true;
+    S.pwInput = "";
+  } else {
+    S.pwError = "密碼不對，請再試一次。";
+  }
+  render();
+}
+function handleLock() {
+  S.pwUnlocked = false;
+  S.pwInput = "";
+  S.pwError = "";
+  render();
+}
+async function handleChangePassword() {
+  S.pwError = "";
+  if (S.pwInput.length < 4) { S.pwError = "新密碼至少要 4 個字元。"; render(); return; }
+  if (S.pwInput !== S.pwInput2) { S.pwError = "兩次輸入的新密碼不一樣。"; render(); return; }
+  const hash = await hashPassword(S.pwInput);
+  S.adminPassword = hash;
+  S.pwInput = "";
+  S.pwInput2 = "";
+  S.editingPassword = false;
+  render();
+  await saveToGithub(Object.assign(currentSettings({ adminPassword: hash }), { transactions: S.transactions, members: S.members }));
+}
+function openChangePassword() {
+  S.editingPassword = true;
+  S.pwInput = "";
+  S.pwInput2 = "";
+  S.pwError = "";
+  render();
+}
+function closeChangePassword() {
+  S.editingPassword = false;
+  render();
+}
+
+/* ============ 輸入欄位（不觸發整頁重繪，避免失焦） ============ */
+function updateConnectButtonState() {
+  const btn = document.getElementById('connectBtn');
+  if (!btn) return;
+  const canConnect = S.ghToken.trim().length > 0 && S.pwInput.trim().length > 0;
+  btn.disabled = !canConnect;
+}
+function onGhTokenInput(v) { S.ghToken = v; updateConnectButtonState(); }
+function onPwInput(v) { S.pwInput = v; updateConnectButtonState(); }
+function onPwInput2(v) { S.pwInput2 = v; }
+function onNewMemberInput(v) { S.newMemberName = v; }
+function onTxField(field, v) { S.txDraft[field] = v; }
+function onDueAmountChange(v) {
+  const val = Number(v) || 0;
+  S.dueAmount = val;
+  persistSettings({ className: S.className, dueAmount: val, classSize: S.classSize });
+}
+function onClassSizeChange(v) {
+  const val = Number(v) || 0;
+  S.classSize = val;
+  persistSettings({ className: S.className, dueAmount: S.dueAmount, classSize: val });
+}
+function startEditClassName() {
+  S.editingClassName = true;
+  render();
+}
+function onClassNameInput(v) { S.className = v; }
+function commitClassName() {
+  S.editingClassName = false;
+  render();
+  persistSettings({ className: S.className, dueAmount: S.dueAmount, classSize: S.classSize });
+}
+function setTab(t) {
+  S.tab = t;
+  render();
+}
+
+/* ============ 渲染 ============ */
+function render() {
+  const app = document.getElementById("app");
+  if (!S.connected) {
+    app.innerHTML = renderConnectScreen();
+    return;
+  }
+  if (!S.pwUnlocked) {
+    app.innerHTML = renderPasswordScreen();
+    return;
+  }
+  app.innerHTML = renderMainApp();
+  if (S.tab === "chart") {
+    requestAnimationFrame(renderCharts);
+  }
+}
+
+function renderConnectScreen() {
+  const canConnect = S.ghToken.trim().length > 0 && S.pwInput.trim().length > 0;
+  return `
+    <div class="cl-gh-box">
+      <div class="cl-gh-title">${icon('server', 17)} GitHub 連線設定（總務專用・後台）</div>
+      <div class="cl-gh-desc">
+        這裡的資料會直接寫進 GitHub 倉庫裡的一個 JSON 檔案，同學版每 10 秒會去讀同一個檔案，
+        所以總務這邊儲存之後，同學畫面會自動跟著更新，不需要複製貼上任何東西。
+      </div>
+      <div class="cl-gh-grid">
+        <div class="full">
+          <label>Personal Access Token（需要該倉庫的 Contents 讀寫權限）</label>
+          <input type="password" placeholder="ghp_xxxxxxxxxxxx" id="ghTokenInput" value="${escapeHtml(S.ghToken)}" oninput="onGhTokenInput(this.value)" onkeydown="if(event.key==='Enter'){document.getElementById('connectBtn').click();}">
+        </div>
+        <div class="full">
+          <label>管理密碼（第一次連線會直接建立這組密碼；之後連線要輸入同一組才能進去）</label>
+          <input type="password" placeholder="至少 4 個字元" id="pwInputConnect" value="${escapeHtml(S.pwInput)}" oninput="onPwInput(this.value)" onkeydown="if(event.key==='Enter'){document.getElementById('connectBtn').click();}">
+        </div>
+      </div>
+      ${S.pwError ? `<div class="cl-pw-error">${escapeHtml(S.pwError)}</div>` : ''}
+      <div class="cl-gh-actions">
+        <button class="cl-btn" id="connectBtn" ${canConnect ? '' : 'disabled'} onclick="handleConnect()">
+          ${icon('refresh', 14)} 連接並登入
+        </button>
+        ${S.syncMessage ? `<div class="cl-sync-row ${S.syncStatus}">${S.syncStatus === 'saving' ? icon('cloudup', 14) : ''}${escapeHtml(S.syncMessage)}</div>` : ''}
+      </div>
+      <div class="cl-gh-warning">
+        ${icon('alert', 14)}
+        <div>
+          Token 只會留在這個頁面的記憶體裡，不會被儲存，重新整理頁面後要再貼一次。
+          建議用 GitHub 的 <strong>fine-grained token</strong>，只授權「這一個倉庫」的 Contents 讀寫權限，
+          不要用有完整帳號權限的舊版 token，也不要把這個管理頁面的網址公開給同學。
+          管理密碼則是額外一層保護，忘記密碼的話要請熟悉 GitHub 的人直接打開該 JSON 檔案清空 adminPassword 欄位。
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPasswordScreen() {
+  return `
+    <div class="cl-header cl-pw-box">
+      <div class="cl-pw-icon">${icon('lock', 20)}</div>
+      <div class="cl-pw-title">請輸入管理密碼</div>
+      <div class="cl-pw-desc">已經連上 GitHub，請輸入密碼才能查看與修改帳目。</div>
+      <div class="cl-pw-field">
+        <label>管理密碼</label>
+        <input type="password" autofocus id="pwUnlockInput" value="${escapeHtml(S.pwInput)}" oninput="onPwInput(this.value)" onkeydown="if(event.key==='Enter'){handleUnlock();}">
+      </div>
+      ${S.pwError ? `<div class="cl-pw-error">${escapeHtml(S.pwError)}</div>` : ''}
+      <div class="cl-pw-actions">
+        <button class="cl-btn" onclick="handleUnlock()">解鎖</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderMainApp() {
+  const d = computeDerived();
+  let html = `
+    <div class="cl-header">
+      <div class="cl-ribbon"></div>
+      <div class="cl-header-actions">
+        <button class="cl-mini-btn" onclick="reloadFromGithub()">${icon('refresh', 13)}<span> 重新載入</span></button>
+        <button class="cl-mini-btn" onclick="openChangePassword()">${icon('key', 13)}<span> 變更密碼</span></button>
+        <button class="cl-mini-btn" onclick="handleLock()">${icon('lock', 13)}<span> 鎖定</span></button>
+      </div>
+      ${S.syncMessage ? `<div class="cl-sync-row ${S.syncStatus}" style="margin-top:4px;">${S.syncStatus === 'saving' ? icon('cloudup', 14) : ''}${escapeHtml(S.syncMessage)}</div>` : ''}
+      <div class="cl-title-row">
+        ${S.editingClassName
+          ? `<input autofocus value="${escapeHtml(S.className)}" oninput="onClassNameInput(this.value)" onblur="commitClassName()" onkeydown="if(event.key==='Enter'){this.blur();}" style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:26px;border:1px solid var(--line);border-radius:4px;padding:2px 8px;">`
+          : `<h1 class="cl-title" onclick="startEditClassName()" title="點擊修改班級名稱">${escapeHtml(S.className)} 記帳簿</h1>`
+        }
+      </div>
+      <div class="cl-subtitle">CLASS TREASURY LEDGER · 總務後台</div>
+      <div class="cl-note">每次新增／修改都會自動同步到 GitHub，同學畫面最多 10 秒內會看到最新結果。</div>
+
+      <div class="cl-hero">
+        <div class="cl-hero-label">目前結餘</div>
+        <div class="cl-hero-amount${d.balance < 0 ? ' neg' : ''}">${fmt(d.balance)}</div>
+      </div>
+
+      <div class="cl-stats-row">
+        <div class="cl-stat income">
+          ${icon('trendup', 18, 'var(--teal)')}
+          <div><div class="lab">總收入</div><div class="val">${fmt(d.totalIncome)}</div></div>
+        </div>
+        <div class="cl-stat expense">
+          ${icon('trenddown', 18, 'var(--red)')}
+          <div><div class="lab">總支出</div><div class="val">${fmt(d.totalExpense)}</div></div>
+        </div>
+        <div class="cl-stat">
+          ${icon('users', 18, 'var(--ink-light)')}
+          <div><div class="lab">班費繳交</div><div class="val">${d.paidCount}/${S.classSize} 人</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-tabs">
+      <button class="cl-tab${S.tab === 'ledger' ? ' active' : ''}" onclick="setTab('ledger')">${icon('wallet', 15)} 收支明細</button>
+      <button class="cl-tab${S.tab === 'members' ? ' active' : ''}" onclick="setTab('members')">${icon('listchecks', 15)} 班費收款</button>
+      <button class="cl-tab${S.tab === 'chart' ? ' active' : ''}" onclick="setTab('chart')">${icon('pie', 15)} 統計圖表</button>
+    </div>
+  `;
+
+  if (S.tab === 'ledger') html += renderLedgerTab(d);
+  if (S.tab === 'members') html += renderMembersTab(d);
+  if (S.tab === 'chart') html += renderChartTab(d);
+
+  if (S.editingPassword) html += renderPasswordModal();
+
+  return html;
+}
+
+function renderLedgerTab(d) {
+  let html = `
+    <div class="cl-panel">
+      <div class="cl-toolbar">
+        <button class="cl-btn" onclick="openAddTx()">${icon('plus', 15)} 新增紀錄</button>
+        <button class="cl-btn secondary" onclick="exportCSV()">${icon('download', 15)} 匯出 CSV</button>
+      </div>
+  `;
+
+  if (S.showTxForm) {
+    html += `
+      <div class="cl-form">
+        <div class="cl-type-toggle" style="margin-bottom:12px;">
+          <button class="${S.txDraft.type === 'income' ? 'on-income' : ''}" onclick="setTxType('income')">收入</button>
+          <button class="${S.txDraft.type === 'expense' ? 'on-expense' : ''}" onclick="setTxType('expense')">支出</button>
+        </div>
+        <div class="cl-form-grid">
+          <div class="cl-field"><label>日期</label><input type="date" value="${escapeHtml(S.txDraft.date)}" oninput="onTxField('date', this.value)"></div>
+          <div class="cl-field"><label>金額</label><input type="number" placeholder="0" value="${escapeHtml(S.txDraft.amount)}" oninput="onTxField('amount', this.value)"></div>
+          <div class="cl-field"><label>項目名稱</label><input placeholder="例：影印紙" value="${escapeHtml(S.txDraft.item)}" oninput="onTxField('item', this.value)"></div>
+          <div class="cl-field">
+            <label>分類</label>
+            <select onchange="onTxField('category', this.value)">
+              ${CATEGORIES.map(c => `<option value="${escapeHtml(c)}" ${S.txDraft.category === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="cl-field" style="grid-column:1/-1;"><label>備註（選填）</label><input value="${escapeHtml(S.txDraft.note)}" oninput="onTxField('note', this.value)"></div>
+        </div>
+        <div class="cl-form-actions">
+          <button class="cl-btn secondary" onclick="cancelTxForm()">取消</button>
+          <button class="cl-btn" onclick="saveTx()">${S.editingTx ? '儲存修改' : '新增'}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (d.sortedTx.length === 0) {
+    html += `<div class="cl-empty">還沒有任何紀錄，點選「新增紀錄」開始記帳吧。</div>`;
+  } else {
+    html += `<div class="cl-tx-list">` + d.sortedTx.map(t => `
+      <div class="cl-tx-row">
+        <div class="cl-tx-date">${escapeHtml(t.date.slice(5))}</div>
+        <div class="cl-tx-main">
+          <div class="cl-tx-item">${escapeHtml(t.item)}</div>
+          <div class="cl-tx-meta"><span class="cl-tag">${escapeHtml(t.category)}</span>${t.note ? `<span>${escapeHtml(t.note)}</span>` : ''}</div>
+        </div>
+        <div class="cl-tx-amount ${t.type}">${t.type === 'income' ? '+' : '−'}${fmt(t.amount).replace('NT$ ', '')}</div>
+        <div class="cl-tx-actions">
+          <button class="cl-icon-btn" onclick="openEditTx('${t.id}')">${icon('pencil', 15)}</button>
+          <button class="cl-icon-btn" onclick="deleteTx('${t.id}')">${icon('trash', 15)}</button>
+        </div>
+      </div>
+    `).join('') + `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderMembersTab(d) {
+  let html = `
+    <div class="cl-panel">
+      <div class="cl-member-settings">
+        <span>每人應繳班費金額</span>
+        <input type="number" value="${S.dueAmount}" onchange="onDueAmountChange(this.value)">
+        <span>元（適用於新加入的同學）</span>
+        <span style="margin-left:10px;">班級總人數</span>
+        <input type="number" value="${S.classSize}" onchange="onClassSizeChange(this.value)">
+        <span>人</span>
+      </div>
+
+      <div class="cl-member-summary">
+        <div class="cl-stat income" style="min-width:160px;">
+          ${icon('check', 16, 'var(--teal)')}
+          <div><div class="lab">已收金額</div><div class="val">${fmt(d.collectedTotal)}</div></div>
+        </div>
+        <div class="cl-stat expense" style="min-width:160px;">
+          ${icon('x', 16, 'var(--red)')}
+          <div><div class="lab">未收金額</div><div class="val">${fmt(d.outstandingTotal)}</div></div>
+        </div>
+      </div>
+
+      <div class="cl-member-add">
+        <input placeholder="輸入同學姓名" value="${escapeHtml(S.newMemberName)}" oninput="onNewMemberInput(this.value)" onkeydown="if(event.key==='Enter'){addMember();}">
+        <button class="cl-btn" onclick="addMember()">${icon('plus', 15)} 加入名單</button>
+      </div>
+  `;
+
+  if (S.members.length === 0) {
+    html += `<div class="cl-empty">還沒有加入任何同學，請在上方輸入姓名。</div>`;
+  } else {
+    html += `<div class="cl-member-grid">` + S.members.map(m => `
+      <div class="cl-member-card${m.paid ? ' paid' : ''}">
+        <div>
+          <div class="cl-member-name">${escapeHtml(m.name)}</div>
+          <div class="cl-member-amt">${fmt(m.amount)}${m.paid ? '・已繳' : '・未繳'}</div>
+        </div>
+        <div class="cl-member-btns">
+          <div class="cl-check${m.paid ? ' on' : ''}" onclick="togglePaid('${m.id}')" title="${m.paid ? '取消繳費' : '標記已繳'}">
+            ${m.paid ? icon('check', 15) : ''}
+          </div>
+          <button class="cl-icon-btn" onclick="removeMember('${m.id}')">${icon('trash', 15)}</button>
+        </div>
+      </div>
+    `).join('') + `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderChartTab(d) {
+  return `
+    <div class="cl-panel cl-chart-grid">
+      <div class="cl-chart-card">
+        <div class="cl-chart-title">支出分類佔比</div>
+        ${d.expenseByCategory.length === 0
+          ? `<div class="cl-empty">目前尚無支出紀錄。</div>`
+          : `<div style="width:100%;height:280px;"><canvas id="pieChartCanvas"></canvas></div>`
+        }
+      </div>
+      <div class="cl-chart-card">
+        <div class="cl-chart-title">收入 vs 支出</div>
+        <div id="barChartWrap" style="width:100%;height:220px;"><canvas id="barChartCanvas"></canvas></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPasswordModal() {
+  return `
+    <div class="cl-pw-modal-backdrop" onclick="closeChangePassword()">
+      <div class="cl-pw-modal" onclick="event.stopPropagation()">
+        <div class="cl-pw-icon">${icon('key', 20)}</div>
+        <div class="cl-pw-title" style="text-align:center;">變更管理密碼</div>
+        <div class="cl-pw-field" style="margin-top:14px;">
+          <label>新密碼（至少 4 個字元）</label>
+          <input type="password" autofocus oninput="onPwInput(this.value)" onkeydown="if(event.key==='Enter'){handleChangePassword();}">
+        </div>
+        <div class="cl-pw-field">
+          <label>再輸入一次確認</label>
+          <input type="password" oninput="onPwInput2(this.value)" onkeydown="if(event.key==='Enter'){handleChangePassword();}">
+        </div>
+        ${S.pwError ? `<div class="cl-pw-error">${escapeHtml(S.pwError)}</div>` : ''}
+        <div class="cl-pw-actions" style="display:flex;gap:8px;">
+          <button class="cl-btn secondary" style="flex:1;" onclick="closeChangePassword()">取消</button>
+          <button class="cl-btn" style="flex:1;" onclick="handleChangePassword()">儲存新密碼</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============ 圖表（Chart.js） ============ */
+function renderCharts() {
+  const d = computeDerived();
+
+  if (typeof Chart === 'undefined') {
+    const wrap = document.getElementById('barChartWrap');
+    if (wrap) wrap.innerHTML = '<div class="cl-empty">圖表元件載入失敗，請檢查網路連線後重新整理頁面。</div>';
+    return;
+  }
+
+  if (pieChart) { pieChart.destroy(); pieChart = null; }
+  if (barChart) { barChart.destroy(); barChart = null; }
+
+  const pieCanvas = document.getElementById('pieChartCanvas');
+  if (pieCanvas && d.expenseByCategory.length > 0) {
+    pieChart = new Chart(pieCanvas, {
+      type: 'pie',
+      data: {
+        labels: d.expenseByCategory.map(c => c.name),
+        datasets: [{
+          data: d.expenseByCategory.map(c => c.value),
+          backgroundColor: d.expenseByCategory.map((_, i) => CHART_COLORS[i % CHART_COLORS.length])
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: { callbacks: { label: (ctx) => ctx.label + ': ' + fmt(ctx.parsed) } }
+        }
+      }
+    });
+  }
+
+  const barCanvas = document.getElementById('barChartCanvas');
+  if (barCanvas) {
+    barChart = new Chart(barCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['總計'],
+        datasets: [
+          { label: '收入', data: [d.totalIncome], backgroundColor: '#1F6F6B' },
+          { label: '支出', data: [d.totalExpense], backgroundColor: '#A8452E' }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + fmt(ctx.parsed.x) } }
+        },
+        scales: { x: { beginAtZero: true } }
+      }
+    });
+  }
+}
+
+/* ============ 啟動 ============ */
+render();
+</script>
+
+</body>
+</html>
