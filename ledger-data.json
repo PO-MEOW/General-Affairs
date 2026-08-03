@@ -202,8 +202,15 @@
       "paid": false,
       "amount": 100,
       "txId": null
+    },
+    {
+      "id": "mscl9c782ldiv",
+      "name": "28 陳麒右",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T02:06:38.422Z"
+  "updatedAt": "2026-08-03T02:06:57.299Z"
 }
