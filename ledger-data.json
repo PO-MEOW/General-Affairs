@@ -20,6 +20,24 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mscldoqwvdvb4",
+      "date": "2026-08-03",
+      "item": "29 黃正維 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
+    },
+    {
+      "id": "mscldpu29c0dq",
+      "date": "2026-08-03",
+      "item": "33 蕭瑋仲 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -222,9 +240,9 @@
     {
       "id": "mscl9tk6k2bw2",
       "name": "29 黃正維",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mscldoqwvdvb4"
     },
     {
       "id": "mscladd6h8h7y",
@@ -250,9 +268,9 @@
     {
       "id": "msclbhnvb4kr5",
       "name": "33 蕭瑋仲",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mscldpu29c0dq"
     },
     {
       "id": "msclbrq5lh60l",
@@ -291,5 +309,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T02:10:19.203Z"
+  "updatedAt": "2026-08-03T02:10:21.599Z"
 }
