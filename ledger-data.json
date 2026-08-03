@@ -167,8 +167,15 @@
       "paid": false,
       "amount": 100,
       "txId": null
+    },
+    {
+      "id": "mscl76iv9sw28",
+      "name": "23 陳冠瑋",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T02:04:23.005Z"
+  "updatedAt": "2026-08-03T02:05:16.630Z"
 }
