@@ -48,8 +48,15 @@
       "paid": false,
       "amount": 100,
       "txId": null
+    },
+    {
+      "id": "msckzo8c28bec",
+      "name": "06 謝沛祺",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T01:59:04.594Z"
+  "updatedAt": "2026-08-03T01:59:26.325Z"
 }
