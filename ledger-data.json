@@ -216,8 +216,15 @@
       "paid": false,
       "amount": 100,
       "txId": null
+    },
+    {
+      "id": "mscladd6h8h7y",
+      "name": "30 黃翊銓",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T02:07:19.799Z"
+  "updatedAt": "2026-08-03T02:07:45.469Z"
 }
