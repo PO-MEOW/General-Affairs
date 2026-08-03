@@ -29,8 +29,15 @@
       "paid": true,
       "amount": 100,
       "txId": "ms90xvwn7msm1"
+    },
+    {
+      "id": "mscks77ekyd3h",
+      "name": "黃正維",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-07-31T14:14:52.106Z"
+  "updatedAt": "2026-08-03T01:53:37.673Z"
 }
