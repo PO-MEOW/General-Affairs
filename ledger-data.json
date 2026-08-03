@@ -181,8 +181,15 @@
       "paid": false,
       "amount": 100,
       "txId": null
+    },
+    {
+      "id": "mscl7y4j2ip2a",
+      "name": "25 陳昱維",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T02:05:37.218Z"
+  "updatedAt": "2026-08-03T02:05:52.402Z"
 }
