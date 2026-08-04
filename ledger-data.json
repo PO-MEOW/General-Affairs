@@ -74,6 +74,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mse39mvf2975u",
+      "date": "2026-08-04",
+      "item": "07 于展弘 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -122,9 +131,9 @@
     {
       "id": "mscl06xgdtiv1",
       "name": "07 于展弘",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mse39mvf2975u"
     },
     {
       "id": "mscl0w3njjvyt",
@@ -345,5 +354,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-04T01:54:23.327Z"
+  "updatedAt": "2026-08-04T03:18:50.404Z"
 }
