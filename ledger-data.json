@@ -92,6 +92,15 @@
       "type": "income",
       "amount": 1,
       "note": ""
+    },
+    {
+      "id": "mse714z93ym16",
+      "date": "2026-08-04",
+      "item": "23 陳冠瑋 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -252,9 +261,9 @@
     {
       "id": "mscl76iv9sw28",
       "name": "23 陳冠瑋",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mse714z93ym16"
     },
     {
       "id": "mscl7metrg83l",
@@ -363,5 +372,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-04T03:27:13.784Z"
+  "updatedAt": "2026-08-04T05:04:12.425Z"
 }
