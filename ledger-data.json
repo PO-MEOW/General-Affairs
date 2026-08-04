@@ -56,6 +56,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msdzo5gsxjjzp",
+      "date": "2026-08-04",
+      "item": "20 桂以恆 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -195,9 +204,9 @@
     {
       "id": "mscl5a7cccx3q",
       "name": "20 桂以恆",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msdzo5gsxjjzp"
     },
     {
       "id": "mscl5nyb4azox",
@@ -327,5 +336,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-03T03:01:15.863Z"
+  "updatedAt": "2026-08-04T01:38:09.215Z"
 }
