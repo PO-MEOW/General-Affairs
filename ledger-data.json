@@ -65,6 +65,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mse05rm9p97vg",
+      "date": "2026-08-04",
+      "item": "38 龔泊廷 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -330,11 +339,11 @@
     {
       "id": "mscldj4z8m9sp",
       "name": "38 龔泊廷",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mse05rm9p97vg"
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-04T01:38:09.215Z"
+  "updatedAt": "2026-08-04T01:51:51.074Z"
 }
