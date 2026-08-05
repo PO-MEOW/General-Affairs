@@ -101,6 +101,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msfmx38vk4fhv",
+      "date": "2026-08-05",
+      "item": "11 周子騫 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -177,9 +186,9 @@
     {
       "id": "mscl1rgq4gel3",
       "name": "11 周子騫",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msfmx38vk4fhv"
     },
     {
       "id": "mscl25yujhau4",
@@ -372,5 +381,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-04T05:04:12.425Z"
+  "updatedAt": "2026-08-05T05:16:43.578Z"
 }
