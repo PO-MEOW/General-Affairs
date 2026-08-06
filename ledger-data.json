@@ -155,6 +155,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msgvmff81dj50",
+      "date": "2026-08-06",
+      "item": "15 林杰霆 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -259,9 +268,9 @@
     {
       "id": "mscl38tw44ofb",
       "name": "15 林杰霆",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msgvmff81dj50"
     },
     {
       "id": "mscl3ks2uqatg",
@@ -426,5 +435,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-06T02:07:47.811Z"
+  "updatedAt": "2026-08-06T02:08:08.874Z"
 }
