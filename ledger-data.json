@@ -173,6 +173,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msgxz5elos3ji",
+      "date": "2026-08-06",
+      "item": "27 陳柏諺 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -361,9 +370,9 @@
     {
       "id": "mscl8xn0z673q",
       "name": "27 陳柏諺",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msgxz5elos3ji"
     },
     {
       "id": "mscl9c782ldiv",
@@ -444,5 +453,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-06T02:11:12.914Z"
+  "updatedAt": "2026-08-06T03:14:01.650Z"
 }
