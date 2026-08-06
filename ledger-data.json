@@ -128,6 +128,24 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msgtmx2c2xwn0",
+      "date": "2026-08-06",
+      "item": "02 陳雅琳 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
+    },
+    {
+      "id": "msgtmzfk1gb7b",
+      "date": "2026-08-06",
+      "item": "37 蘇文耀 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -141,9 +159,9 @@
     {
       "id": "msckteq8ho8u6",
       "name": "02 陳雅琳",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msgtmx2c2xwn0"
     },
     {
       "id": "mscku2re8tvuq",
@@ -386,9 +404,9 @@
     {
       "id": "msclcxmuf56h1",
       "name": "37 蘇文耀",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msgtmzfk1gb7b"
     },
     {
       "id": "mscldj4z8m9sp",
@@ -399,5 +417,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-06T01:12:31.836Z"
+  "updatedAt": "2026-08-06T01:12:35.574Z"
 }
