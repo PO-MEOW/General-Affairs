@@ -146,6 +146,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "msgvlz64fqmai",
+      "date": "2026-08-06",
+      "item": "19 孫子棋 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -278,9 +287,9 @@
     {
       "id": "mscl4xeuseunj",
       "name": "19 孫子棋",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "msgvlz64fqmai"
     },
     {
       "id": "mscl5a7cccx3q",
@@ -417,5 +426,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-06T01:12:35.574Z"
+  "updatedAt": "2026-08-06T02:07:47.811Z"
 }
