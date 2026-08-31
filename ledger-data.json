@@ -290,15 +290,24 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtgizd84u0cps",
+      "date": "2026-08-31",
+      "item": "01 林妤倢 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
     {
       "id": "msckt60gdp8i5",
       "name": "01 林妤倢",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtgizd84u0cps"
     },
     {
       "id": "msckteq8ho8u6",
@@ -561,5 +570,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:33:54.692Z"
+  "updatedAt": "2026-08-31T00:53:59.882Z"
 }
