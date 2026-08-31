@@ -281,6 +281,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtgi9jatni68j",
+      "date": "2026-08-31",
+      "item": "16 林祈叡 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -392,9 +401,9 @@
     {
       "id": "mscl3ks2uqatg",
       "name": "16 林祈叡",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtgi9jatni68j"
     },
     {
       "id": "mscl43vct44k2",
@@ -552,5 +561,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:33:35.925Z"
+  "updatedAt": "2026-08-31T00:33:54.692Z"
 }
