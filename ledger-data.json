@@ -182,15 +182,6 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
-    },
-    {
-      "id": "mtghsyd65d2oe",
-      "date": "2026-08-31",
-      "item": "32 盧品佑 繳交班費",
-      "category": "班費",
-      "type": "income",
-      "amount": 100,
-      "note": "班費收款"
     }
   ],
   "members": [
@@ -414,9 +405,9 @@
     {
       "id": "msclaux889mkq",
       "name": "32 盧品佑",
-      "paid": true,
+      "paid": false,
       "amount": 100,
-      "txId": "mtghsyd65d2oe"
+      "txId": null
     },
     {
       "id": "msclbhnvb4kr5",
@@ -462,5 +453,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:23:08.962Z"
+  "updatedAt": "2026-08-31T00:23:11.247Z"
 }
