@@ -182,6 +182,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtghvtlm8q9bn",
+      "date": "2026-08-31",
+      "item": "08 王昱宸 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -237,9 +246,9 @@
     {
       "id": "mscl0w3njjvyt",
       "name": "08 王昱宸",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtghvtlm8q9bn"
     },
     {
       "id": "mscl18lt4fz9z",
@@ -453,5 +462,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:23:11.247Z"
+  "updatedAt": "2026-08-31T00:23:14.864Z"
 }
