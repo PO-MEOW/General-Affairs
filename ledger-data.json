@@ -254,6 +254,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtgi8p6xxfk0d",
+      "date": "2026-08-31",
+      "item": "18 倪葵安 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -379,9 +388,9 @@
     {
       "id": "mscl4hfqllyqp",
       "name": "18 倪葵安",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtgi8p6xxfk0d"
     },
     {
       "id": "mscl4xeuseunj",
@@ -525,5 +534,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:33:13.833Z"
+  "updatedAt": "2026-08-31T00:33:15.678Z"
 }
