@@ -184,15 +184,6 @@
       "note": "班費收款"
     },
     {
-      "id": "mtghsvcv6w7qp",
-      "date": "2026-08-31",
-      "item": "17 侯宗穎 繳交班費",
-      "category": "班費",
-      "type": "income",
-      "amount": 100,
-      "note": "班費收款"
-    },
-    {
       "id": "mtghsyd65d2oe",
       "date": "2026-08-31",
       "item": "32 盧品佑 繳交班費",
@@ -318,9 +309,9 @@
     {
       "id": "mscl43vct44k2",
       "name": "17 侯宗穎",
-      "paid": true,
+      "paid": false,
       "amount": 100,
-      "txId": "mtghsvcv6w7qp"
+      "txId": null
     },
     {
       "id": "mscl4hfqllyqp",
@@ -471,5 +462,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:23:06.751Z"
+  "updatedAt": "2026-08-31T00:23:08.962Z"
 }
