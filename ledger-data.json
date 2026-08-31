@@ -236,6 +236,24 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtgi8h8fsawkr",
+      "date": "2026-08-31",
+      "item": "25 陳昱維 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
+    },
+    {
+      "id": "mtgi8nrnprps3",
+      "date": "2026-08-31",
+      "item": "26 陳柏丞 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -410,16 +428,16 @@
     {
       "id": "mscl7y4j2ip2a",
       "name": "25 陳昱維",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtgi8h8fsawkr"
     },
     {
       "id": "mscl8btnpekvq",
       "name": "26 陳柏丞",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtgi8nrnprps3"
     },
     {
       "id": "mscl8xn0z673q",
@@ -507,5 +525,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:33:04.437Z"
+  "updatedAt": "2026-08-31T00:33:13.833Z"
 }
