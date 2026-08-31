@@ -299,6 +299,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtgjdofrz90br",
+      "date": "2026-08-31",
+      "item": "冷氣費",
+      "category": "雜項支出",
+      "type": "expense",
+      "amount": 1000,
+      "note": ""
     }
   ],
   "members": [
@@ -570,5 +579,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-08-31T00:53:59.882Z"
+  "updatedAt": "2026-08-31T01:05:07.594Z"
 }
