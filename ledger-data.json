@@ -317,6 +317,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtj9tvb3dwujd",
+      "date": "2026-09-01",
+      "item": "垃圾袋",
+      "category": "雜項支出",
+      "type": "expense",
+      "amount": 100,
+      "note": ""
     }
   ],
   "members": [
@@ -588,5 +597,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-01T22:59:38.099Z"
+  "updatedAt": "2026-09-01T23:01:05.362Z"
 }
