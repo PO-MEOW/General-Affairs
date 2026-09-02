@@ -326,6 +326,15 @@
       "type": "expense",
       "amount": 100,
       "note": ""
+    },
+    {
+      "id": "mtjr00o8v5b5m",
+      "date": "2026-09-02",
+      "item": "28 陳麒右 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -521,9 +530,9 @@
     {
       "id": "mscl9c782ldiv",
       "name": "28 陳麒右",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtjr00o8v5b5m"
     },
     {
       "id": "mscl9tk6k2bw2",
@@ -597,5 +606,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-01T23:01:05.362Z"
+  "updatedAt": "2026-09-02T07:01:45.723Z"
 }
