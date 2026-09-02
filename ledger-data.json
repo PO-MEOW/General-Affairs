@@ -335,6 +335,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtjr0dxqx94pa",
+      "date": "2026-09-02",
+      "item": "圖釘",
+      "category": "文具用品",
+      "type": "expense",
+      "amount": 24,
+      "note": ""
     }
   ],
   "members": [
@@ -606,5 +615,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-02T07:01:45.723Z"
+  "updatedAt": "2026-09-02T07:02:02.921Z"
 }
