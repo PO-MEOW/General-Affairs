@@ -650,8 +650,15 @@
       "paid": true,
       "amount": 100,
       "txId": "mse0913blryfw"
+    },
+    {
+      "id": "mtl54yu79btyd",
+      "name": "06 謝沛祺",
+      "paid": false,
+      "amount": 100,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-03T06:22:21.828Z"
+  "updatedAt": "2026-09-03T06:25:17.415Z"
 }
