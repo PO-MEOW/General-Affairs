@@ -344,6 +344,15 @@
       "type": "expense",
       "amount": 24,
       "note": ""
+    },
+    {
+      "id": "mtl46fh7f7jor",
+      "date": "2026-09-03",
+      "item": "零錢",
+      "category": "班費",
+      "type": "income",
+      "amount": 2,
+      "note": ""
     }
   ],
   "members": [
@@ -615,5 +624,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-02T07:02:02.921Z"
+  "updatedAt": "2026-09-03T05:58:26.040Z"
 }
