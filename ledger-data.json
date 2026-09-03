@@ -362,6 +362,24 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtl514f0ai47r",
+      "date": "2026-09-03",
+      "item": "05 劉美緹 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
+    },
+    {
+      "id": "mtl515um7eeq8",
+      "date": "2026-09-03",
+      "item": "12 林仕勳 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -396,16 +414,9 @@
     {
       "id": "msckz7glu521l",
       "name": "05 劉美緹",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
-    },
-    {
-      "id": "msckzo8c28bec",
-      "name": "06 謝沛祺",
-      "paid": false,
-      "amount": 100,
-      "txId": null
+      "txId": "mtl514f0ai47r"
     },
     {
       "id": "mscl06xgdtiv1",
@@ -445,9 +456,9 @@
     {
       "id": "mscl25yujhau4",
       "name": "12 林仕勳",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtl515um7eeq8"
     },
     {
       "id": "mscl2i403gh3g",
@@ -633,5 +644,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-03T06:22:17.079Z"
+  "updatedAt": "2026-09-03T06:22:19.877Z"
 }
