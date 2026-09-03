@@ -353,6 +353,15 @@
       "type": "income",
       "amount": 2,
       "note": ""
+    },
+    {
+      "id": "mtl513ot2og46",
+      "date": "2026-09-03",
+      "item": "03 楊勻佑 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -373,9 +382,9 @@
     {
       "id": "mscku2re8tvuq",
       "name": "03 楊勻佑",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtl513ot2og46"
     },
     {
       "id": "msckuloufiydz",
@@ -624,5 +633,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-03T05:58:26.040Z"
+  "updatedAt": "2026-09-03T06:22:17.079Z"
 }
