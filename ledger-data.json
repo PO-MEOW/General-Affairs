@@ -380,6 +380,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mtl517cp4ky3f",
+      "date": "2026-09-03",
+      "item": "34 謝中藏 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -610,9 +619,9 @@
     {
       "id": "msclbrq5lh60l",
       "name": "34 謝中藏",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mtl517cp4ky3f"
     },
     {
       "id": "msclc3l7gnbpp",
@@ -644,5 +653,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-03T06:22:19.877Z"
+  "updatedAt": "2026-09-03T06:22:21.828Z"
 }
