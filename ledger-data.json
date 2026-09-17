@@ -407,6 +407,15 @@
       "type": "income",
       "amount": 100,
       "note": "班費收款"
+    },
+    {
+      "id": "mu563jk3f4lha",
+      "date": "2026-09-17",
+      "item": "06謝沛祺 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 500,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -714,9 +723,9 @@
     {
       "id": "mu561j09ucvfa",
       "name": "06謝沛祺",
-      "paid": false,
+      "paid": true,
       "amount": 500,
-      "txId": null
+      "txId": "mu563jk3f4lha"
     },
     {
       "id": "mu561yb28rt6u",
@@ -741,5 +750,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-17T06:47:14.797Z"
+  "updatedAt": "2026-09-17T06:47:34.108Z"
 }
