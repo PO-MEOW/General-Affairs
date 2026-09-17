@@ -398,6 +398,15 @@
       "type": "expense",
       "amount": 1000,
       "note": ""
+    },
+    {
+      "id": "mu55z52irqowf",
+      "date": "2026-09-17",
+      "item": "04楊凱芹 繳交班費",
+      "category": "班費",
+      "type": "income",
+      "amount": 100,
+      "note": "班費收款"
     }
   ],
   "members": [
@@ -698,11 +707,11 @@
     {
       "id": "mu55z3bvlmnjp",
       "name": "04楊凱芹",
-      "paid": false,
+      "paid": true,
       "amount": 100,
-      "txId": null
+      "txId": "mu55z52irqowf"
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-17T06:44:06.453Z"
+  "updatedAt": "2026-09-17T06:44:08.687Z"
 }
