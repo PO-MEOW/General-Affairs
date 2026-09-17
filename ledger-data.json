@@ -682,8 +682,15 @@
       "paid": false,
       "amount": 500,
       "txId": null
+    },
+    {
+      "id": "mu55x688a8m30",
+      "name": "02陳雅琳",
+      "paid": false,
+      "amount": 500,
+      "txId": null
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-17T06:42:19.544Z"
+  "updatedAt": "2026-09-17T06:42:36.894Z"
 }
