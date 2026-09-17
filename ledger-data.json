@@ -1,6 +1,6 @@
 {
   "className": "211的",
-  "dueAmount": 500,
+  "dueAmount": 100,
   "classSize": 38,
   "transactions": [
     {
@@ -697,5 +697,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-17T06:43:39.177Z"
+  "updatedAt": "2026-09-17T06:43:55.483Z"
 }
