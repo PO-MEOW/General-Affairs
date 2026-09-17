@@ -121,15 +121,6 @@
       "note": "班費收款"
     },
     {
-      "id": "msgtmwjxm6y6z",
-      "date": "2026-08-06",
-      "item": "04 楊凱芹 繳交班費",
-      "category": "班費",
-      "type": "income",
-      "amount": 100,
-      "note": "班費收款"
-    },
-    {
       "id": "msgtmx2c2xwn0",
       "date": "2026-08-06",
       "item": "02 陳雅琳 繳交班費",
@@ -432,13 +423,6 @@
       "txId": "mtl513ot2og46"
     },
     {
-      "id": "msckuloufiydz",
-      "name": "04 楊凱芹",
-      "paid": true,
-      "amount": 100,
-      "txId": "msgtmwjxm6y6z"
-    },
-    {
       "id": "msckz7glu521l",
       "name": "05 劉美緹",
       "paid": true,
@@ -713,5 +697,5 @@
     }
   ],
   "adminPassword": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-  "updatedAt": "2026-09-17T06:43:37.197Z"
+  "updatedAt": "2026-09-17T06:43:39.177Z"
 }
