@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班級記帳簿・統計報表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #F1F3ED; --paper: #FFFFFF; --ink: #2A2B22; --ink-light: #6B6D5E;
+    --red: #A8452E; --teal: #1F6F6B; --line: #DCDFD3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg); color: var(--ink); min-height: 100vh;
+  }
+  .csr-shell { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+  .csr-header { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 24px 28px; position: relative; }
+  .csr-badge { position: absolute; top: -1px; right: 28px; font-size: 11px; letter-spacing: 1px; background: var(--teal); color: #fff; padding: 4px 10px; border-radius: 0 0 4px 4px; }
+  .csr-title { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 24px; margin: 0; }
+  .csr-subtitle { font-size: 12px; color: var(--ink-light); letter-spacing: 2px; margin-top: 2px; }
+  .csr-hero-label { font-size: 13px; color: var(--ink-light); margin-top: 18px; }
+  .csr-hero-amount { font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 40px; }
+  .csr-hero-amount.neg { color: var(--red); }
+  .csr-stats-row { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+  .csr-stat { flex: 1; min-width: 140px; border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+  .csr-stat .val { font-weight: 700; font-size: 16px; }
+  .csr-stat.income .val { color: var(--teal); }
+  .csr-stat.expense .val { color: var(--red); }
+  .csr-stat .lab { font-size: 12px; color: var(--ink-light); }
+  .csr-updated-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px; }
+  .csr-updated { font-size: 12px; color: var(--ink-light); }
+  .csr-refresh-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; font-size: 12px; color: var(--ink-light); cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+  .csr-refresh-btn:hover { color: var(--ink); }
+  .csr-refresh-btn svg.spin { animation: csr-spin 0.6s linear; }
+  @keyframes csr-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .csr-error { color: var(--red); font-size: 12px; margin-top: 10px; }
+
+  .csr-section-title { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 16px; margin: 28px 0 10px; }
+
+  .csr-table-wrap { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; overflow-x: auto; }
+  table.csr-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+  table.csr-table th { text-align: left; font-size: 11px; color: var(--ink-light); font-weight: 500; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  table.csr-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.csr-table tr:last-child td { border-bottom: none; }
+  table.csr-table td.amt { text-align: right; font-weight: 700; white-space: nowrap; }
+  table.csr-table td.amt.income { color: var(--teal); }
+  table.csr-table td.amt.expense { color: var(--red); }
+  table.csr-table td.date { white-space: nowrap; color: var(--ink-light); font-size: 12px; }
+  .csr-tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--bg); color: var(--ink-light); margin-right: 6px; white-space: nowrap; }
+  .csr-note { font-size: 12px; color: var(--ink-light); }
+
+  .csr-empty { text-align: center; padding: 40px 10px; color: var(--ink-light); font-size: 14px; }
+
+  .csr-chart-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 10px; }
+  .csr-chart-card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px; }
+  .csr-chart-title { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+
+  @media (min-width: 720px) {
+    .csr-chart-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="csr-shell">
+  <div class="csr-header">
+    <div class="csr-badge">統計報表・唯讀</div>
+    <h1 class="csr-title" id="csrTitle">班級 記帳簿・統計報表</h1>
+    <div class="csr-subtitle">CLASS TREASURY · FULL LEDGER REPORT</div>
+
+    <div id="csrErrorBox" class="csr-error" style="display:none; margin-top:16px;"></div>
+
+    <div id="csrHero" style="display:none;">
+      <div class="csr-hero-label">目前總餘額</div>
+      <div class="csr-hero-amount" id="csrBalance">NT$ 0</div>
+      <div class="csr-stats-row">
+        <div class="csr-stat income">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <div><div class="lab">總收入</div><div class="val" id="csrIncome">NT$ 0</div></div>
+        </div>
+        <div class="csr-stat expense">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+          <div><div class="lab">總支出</div><div class="val" id="csrExpense">NT$ 0</div></div>
+        </div>
+        <div class="csr-stat">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1.5a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4V20"/><circle cx="9" cy="8" r="3.5"/><path d="M21.5 20v-1.5a4 4 0 0 0-2.7-3.78"/><path d="M15 4.13a3.5 3.5 0 0 1 0 6.75"/></svg>
+          <div><div class="lab">紀錄筆數</div><div class="val" id="csrCount">0 筆</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="csr-updated-row">
+      <div class="csr-updated" id="csrUpdated">尚未取得資料</div>
+      <button class="csr-refresh-btn" id="csrRefreshBtn">
+        <svg id="csrRefreshIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/>
+        </svg>
+        立即檢查
+      </button>
+    </div>
+  </div>
+
+  <div class="csr-section-title" style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <span>收支明細（每一筆紀錄，最新在最上面）</span>
+    <button class="csr-refresh-btn" id="csrExportBtn" style="border-color: var(--ink); color: var(--ink);">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      匯出成 Excel
+    </button>
+  </div>
+  <div id="csrTableWrap"></div>
+
+  <div class="csr-section-title">統計圖表</div>
+  <div class="csr-chart-grid">
+    <div class="csr-chart-card">
+      <div class="csr-chart-title">支出分類佔比</div>
+      <div id="csrPieWrap" style="width:100%;height:260px;"><canvas id="csrPieCanvas"></canvas></div>
+    </div>
+    <div class="csr-chart-card">
+      <div class="csr-chart-title">收入 vs 支出</div>
+      <div id="csrBarWrap" style="width:100%;height:200px;"><canvas id="csrBarCanvas"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- 請填入跟 class_ledger_admin.html / class_ledger_view.html 同一組 GitHub 設定 ----
+  const GH_OWNER = "PO-MEOW";
+  const GH_REPO = "General-Affairs";
+  const GH_PATH = "ledger-data.json";
+  const GH_BRANCH = "main";
+  const POLL_MS = 10000;
+
+  const CHART_COLORS = ["#1F6F6B", "#C98A2E", "#A8452E", "#5C7A9E", "#8C7851", "#5C7A5C", "#9C6B8A"];
+
+  let data = null;
+  let lastChecked = null;
+  let pieChart = null, barChart = null;
+
+  function fmt(n) {
+    return "NT$ " + Math.round(n || 0).toLocaleString();
+  }
+  function rawUrl() {
+    return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_PATH}?t=${Date.now()}`;
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function setRefreshSpinning(spinning) {
+    document.getElementById("csrRefreshIcon").classList.toggle("spin", !!spinning);
+  }
+
+  function render() {
+    const transactions = data && Array.isArray(data.transactions) ? data.transactions : [];
+    const totalIncome = transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount), 0);
+    const totalExpense = transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount), 0);
+    const balance = totalIncome - totalExpense;
+    const sortedTx = [...transactions].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+    document.getElementById("csrTitle").textContent = (data && data.className ? data.className : "班級") + " 記帳簿・統計報表";
+
+    const balEl = document.getElementById("csrBalance");
+    balEl.textContent = fmt(balance);
+    balEl.classList.toggle("neg", balance < 0);
+    document.getElementById("csrIncome").textContent = fmt(totalIncome);
+    document.getElementById("csrExpense").textContent = fmt(totalExpense);
+    document.getElementById("csrCount").textContent = transactions.length + " 筆";
+
+    const updatedText =
+      (data && data.updatedAt
+        ? "資料更新時間：" + new Date(data.updatedAt).toLocaleString("zh-TW")
+        : "尚未取得資料") +
+      (lastChecked ? " ・上次檢查：" + lastChecked.toLocaleTimeString("zh-TW") : "");
+    document.getElementById("csrUpdated").textContent = updatedText;
+
+    const tableWrap = document.getElementById("csrTableWrap");
+    if (!data) {
+      tableWrap.innerHTML = "";
+    } else if (sortedTx.length === 0) {
+      tableWrap.innerHTML = '<div class="csr-table-wrap"><div class="csr-empty">目前尚無收支紀錄。</div></div>';
+    } else {
+      tableWrap.innerHTML =
+        '<div class="csr-table-wrap"><table class="csr-table"><thead><tr>' +
+        '<th>日期</th><th>項目</th><th>分類</th><th>備註</th><th style="text-align:right;">金額</th>' +
+        '</tr></thead><tbody>' +
+        sortedTx.map(t => {
+          const amt = fmt(t.amount).toString().replace("NT$ ", "");
+          const sign = t.type === "income" ? "+" : "−";
+          return (
+            '<tr>' +
+              '<td class="date">' + escapeHtml(t.date) + '</td>' +
+              '<td>' + escapeHtml(t.item) + '</td>' +
+              '<td><span class="csr-tag">' + escapeHtml(t.category) + '</span></td>' +
+              '<td class="csr-note">' + (t.note ? escapeHtml(t.note) : '—') + '</td>' +
+              '<td class="amt ' + t.type + '">' + sign + amt + '</td>' +
+            '</tr>'
+          );
+        }).join("") +
+        '</tbody></table></div>';
+    }
+
+    renderCharts(transactions, totalIncome, totalExpense);
+  }
+
+  function renderCharts(transactions, totalIncome, totalExpense) {
+    if (typeof Chart === "undefined") {
+      const pw = document.getElementById("csrPieWrap");
+      const bw = document.getElementById("csrBarWrap");
+      const msg = '<div class="csr-empty">圖表元件載入失敗，請檢查網路連線後重新整理頁面。</div>';
+      if (pw) pw.innerHTML = msg;
+      if (bw) bw.innerHTML = msg;
+      return;
+    }
+
+    if (pieChart) { pieChart.destroy(); pieChart = null; }
+    if (barChart) { barChart.destroy(); barChart = null; }
+
+    const catMap = {};
+    transactions.filter(t => t.type === "expense").forEach(t => {
+      catMap[t.category] = (catMap[t.category] || 0) + Number(t.amount);
+    });
+    const expenseByCategory = Object.entries(catMap).map(([name, value]) => ({ name, value }));
+
+    const pieWrap = document.getElementById("csrPieWrap");
+    if (expenseByCategory.length === 0) {
+      pieWrap.innerHTML = '<div class="csr-empty">目前尚無支出紀錄。</div>';
+    } else {
+      if (!document.getElementById("csrPieCanvas")) {
+        pieWrap.innerHTML = '<canvas id="csrPieCanvas"></canvas>';
+      }
+      const pieCanvas = document.getElementById("csrPieCanvas");
+      pieChart = new Chart(pieCanvas, {
+        type: "pie",
+        data: {
+          labels: expenseByCategory.map(c => c.name),
+          datasets: [{
+            data: expenseByCategory.map(c => c.value),
+            backgroundColor: expenseByCategory.map((_, i) => CHART_COLORS[i % CHART_COLORS.length])
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: { callbacks: { label: (ctx) => ctx.label + ": " + fmt(ctx.parsed) } }
+          }
+        }
+      });
+    }
+
+    const barCanvas = document.getElementById("csrBarCanvas");
+    if (barCanvas) {
+      barChart = new Chart(barCanvas, {
+        type: "bar",
+        data: {
+          labels: ["總計"],
+          datasets: [
+            { label: "收入", data: [totalIncome], backgroundColor: "#1F6F6B" },
+            { label: "支出", data: [totalExpense], backgroundColor: "#A8452E" }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ": " + fmt(ctx.parsed.x) } }
+          },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
+    }
+  }
+
+  async function fetchData(showLoading) {
+    if (showLoading) setRefreshSpinning(true);
+    try {
+      const res = await fetch(rawUrl(), { cache: "no-store" });
+      if (!res.ok) {
+        throw new Error(
+          res.status === 404
+            ? "還找不到這個檔案，請確認總務已經存過一次資料。"
+            : `讀取失敗（HTTP ${res.status}）`
+        );
+      }
+      const json = await res.json();
+      data = json;
+      lastChecked = new Date();
+      document.getElementById("csrErrorBox").style.display = "none";
+      document.getElementById("csrHero").style.display = "";
+      render();
+    } catch (e) {
+      const box = document.getElementById("csrErrorBox");
+      box.textContent = e.message || "讀取失敗，請確認 GH_OWNER / GH_REPO / GH_PATH 是否填對。";
+      if (!data) {
+        box.style.display = "";
+        document.getElementById("csrHero").style.display = "none";
+      }
+      render();
+    } finally {
+      setRefreshSpinning(false);
+    }
+  }
+
+  function exportExcel() {
+    if (typeof XLSX === "undefined") {
+      alert("匯出元件載入失敗，請檢查網路連線後重新整理頁面再試一次。");
+      return;
+    }
+    const transactions = data && Array.isArray(data.transactions) ? data.transactions : [];
+    if (transactions.length === 0) {
+      alert("目前還沒有任何收支紀錄可以匯出。");
+      return;
+    }
+    const sortedTx = [...transactions].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+    const totalIncome = transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount), 0);
+    const totalExpense = transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount), 0);
+    const balance = totalIncome - totalExpense;
+
+    const detailRows = sortedTx.map(t => ({
+      "日期": t.date,
+      "項目": t.item,
+      "分類": t.category,
+      "收支類型": t.type === "income" ? "收入" : "支出",
+      "金額": Number(t.amount),
+      "備註": t.note || ""
+    }));
+
+    const summaryRows = [
+      { "項目": "總收入", "金額": totalIncome },
+      { "項目": "總支出", "金額": totalExpense },
+      { "項目": "目前結餘", "金額": balance },
+      { "項目": "紀錄筆數", "金額": transactions.length },
+      { "項目": "匯出時間", "金額": new Date().toLocaleString("zh-TW") }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+    wsDetail["!cols"] = [{ wch: 12 }, { wch: 24 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 24 }];
+    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+    wsSummary["!cols"] = [{ wch: 14 }, { wch: 22 }];
+
+    XLSX.utils.book_append_sheet(wb, wsSummary, "摘要");
+    XLSX.utils.book_append_sheet(wb, wsDetail, "明細");
+
+    const className = (data && data.className) || "班級";
+    const filename = `${className}_記帳簿_${todayStrForFile()}.xlsx`;
+    XLSX.writeFile(wb, filename);
+  }
+
+  function todayStrForFile() {
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+  }
+
+  document.getElementById("csrRefreshBtn").addEventListener("click", () => fetchData(true));
+  document.getElementById("csrExportBtn").addEventListener("click", exportExcel);
+
+  fetchData(true);
+  setInterval(() => fetchData(false), POLL_MS);
+})();
+</script>
+
+</body>
+</html>
